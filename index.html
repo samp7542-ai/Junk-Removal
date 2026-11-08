@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Quick Junk Removal — Free Instant Quote</title>
+<meta name="description" content="Get an instant junk removal price in about 60 seconds. Pick your items, choose a time, and we'll text you a free, no-obligation quote." />
+<meta name="theme-color" content="#0f5132" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♻️</text></svg>" />
+<style>
+  :root {
+    --green: #16a34a;
+    --green-dark: #15803d;
+    --green-deep: #0f5132;
+    --green-soft: #f0fdf4;
+    --green-line: #bbf7d0;
+    --ink: #111827;
+    --ink-2: #374151;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --bg: #f4f6f5;
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    background: var(--green-deep);
+    color: #fff;
+    padding: 12px 20px;
+    padding-top: max(12px, env(safe-area-inset-top));
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; top: 0; z-index: 20;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -.01em; color: #fff; text-decoration: none; }
+  .brand .logo {
+    background: #fff; width: 34px; height: 34px; border-radius: 9px;
+    display: grid; place-items: center; font-size: 18px;
+  }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .estimate-chip {
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.28);
+    padding: 7px 12px; border-radius: 999px;
+    font-size: 13px; font-weight: 700; white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .call-btn {
+    display: none; align-items: center; gap: 6px;
+    background: #fff; color: var(--green-deep); text-decoration: none;
+    padding: 7px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; white-space: nowrap;
+  }
+  .call-btn.show { display: inline-flex; }
+
+  /* ---------- Hero (step 1 only) ---------- */
+  .hero {
+    background: linear-gradient(180deg, var(--green-deep) 0%, #14653f 100%);
+    color: #fff;
+    padding: 28px 20px 84px;
+    text-align: center;
+  }
+  .hero h1 { font-size: clamp(26px, 5vw, 36px); line-height: 1.15; letter-spacing: -.02em; max-width: 620px; margin: 0 auto 10px; }
+  .hero p { opacity: .88; font-size: 16px; max-width: 520px; margin: 0 auto 18px; line-height: 1.5; }
+  .trust { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .trust span {
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+    border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600;
+  }
+  body.compact .hero { padding: 0 0 56px; }
+  body.compact .hero-inner { display: none; }
+
+  main {
+    flex: 1; width: 100%; max-width: 680px;
+    margin: -60px auto 0; padding: 0 16px 32px;
+    position: relative; z-index: 1;
+  }
+  body.compact main { margin-top: -40px; }
+
+  /* ---------- Card ---------- */
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+  }
+  .card-body { padding: 24px 24px 8px; }
+  @media (max-width: 480px) { .card-body { padding: 20px 16px 4px; } }
+
+  /* ---------- Progress ---------- */
+  .progress-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-size: 13px; }
+  .progress-head .count { color: var(--muted); font-weight: 600; }
+  .progress-head .name { color: var(--green-dark); font-weight: 700; }
+  .progress-bar { height: 6px; background: #e8ece9; border-radius: 999px; overflow: hidden; margin-bottom: 22px; }
+  .progress-fill { height: 100%; width: 0; background: var(--green); border-radius: 999px; transition: width .35s ease; }
+
+  /* ---------- Steps ---------- */
+  .step { display: none; }
+  .step.active { display: block; animation: fade .28s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .step h2 { font-size: 23px; line-height: 1.25; letter-spacing: -.01em; margin-bottom: 6px; }
+  .sub { color: var(--muted); font-size: 15px; margin-bottom: 18px; line-height: 1.5; }
+  .section-label { font-weight: 700; font-size: 15px; margin: 22px 0 10px; color: var(--ink-2); }
+  .section-label:first-of-type { margin-top: 0; }
+
+  .step-error {
+    display: none; align-items: center; gap: 8px;
+    background: var(--danger-soft); color: var(--danger);
+    border: 1px solid #fecaca; border-radius: 10px;
+    padding: 10px 12px; font-size: 14px; font-weight: 600; margin-bottom: 14px;
+  }
+  .step-error.show { display: flex; animation: shake .3s ease; }
+  @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+  /* ---------- Big options ---------- */
+  .options { display: grid; gap: 10px; }
+  .options.cols-2 { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 480px) { .options.cols-2 { grid-template-columns: 1fr; } }
+
+  .option {
+    position: relative;
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 16px; border: 2px solid var(--line); border-radius: 12px;
+    cursor: pointer; font-size: 16px; font-weight: 600; background: #fff;
+    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+    user-select: none;
+  }
+  .option input { position: absolute; opacity: 0; pointer-events: none; }
+  .option .emoji { font-size: 24px; line-height: 1; width: 28px; text-align: center; flex: none; }
+  .option .text { display: flex; flex-direction: column; gap: 2px; }
+  .option .text small { font-weight: 500; color: var(--muted); font-size: 13px; }
+  .option .right { margin-left: auto; font-size: 14px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+  .option .tick {
+    margin-left: auto; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #d1d5db; flex: none; display: grid; place-items: center;
+    transition: all .15s ease;
+  }
+  .option .right + .tick { margin-left: 12px; }
+  .option input[type="checkbox"] ~ .tick { border-radius: 6px; }
+  @media (hover: hover) { .option:hover { border-color: #86efac; background: #fbfefc; } }
+  .option:has(input:checked) { border-color: var(--green); background: var(--green-soft); }
+  .option:has(input:checked) .right { color: var(--green-dark); }
+  .option:has(input:checked) .tick { background: var(--green); border-color: var(--green); }
+  .option:has(input:checked) .tick::after { content: ""; width: 6px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: translateY(-1px) rotate(45deg); }
+  .option:has(input:focus-visible) { box-shadow: 0 0 0 3px rgba(22,163,74,.35); }
+
+  /* ---------- Item picker ---------- */
+  .item-tools { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+  .search {
+    flex: 1; position: relative;
+  }
+  .search input {
+    width: 100%; padding: 12px 14px 12px 40px; border: 2px solid var(--line); border-radius: 10px;
+    font-size: 16px; font-family: inherit; outline: none; background: #fff;
+  }
+  .search input:focus { border-color: var(--green); }
+  .search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .sel-count {
+    font-size: 13px; font-weight: 700; color: var(--green-dark);
+    background: var(--green-soft); border: 1px solid var(--green-line);
+    padding: 6px 10px; border-radius: 999px; white-space: nowrap; display: none;
+  }
+  .sel-count.show { display: inline-block; }
+  .clear-link { background: none; border: 0; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline; display: none; }
+  .clear-link.show { display: inline; }
+
+  .item-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 480px) { .item-grid { grid-template-columns: 1fr; } }
+  .cat-label { grid-column: 1 / -1; font-weight: 800; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: .06em; margin-top: 14px; }
+  .cat-label:first-child { margin-top: 0; }
+  .item {
+    position: relative;
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 12px; border: 2px solid var(--line); border-radius: 10px;
+    cursor: pointer; font-size: 14px; font-weight: 600; background: #fff;
+    transition: border-color .15s, background .15s; user-select: none;
+  }
+  .item input { position: absolute; opacity: 0; pointer-events: none; }
+  .item .emoji { font-size: 20px; width: 24px; text-align: center; flex: none; }
+  .item .fee { margin-left: auto; font-size: 11px; color: #92400e; background: #fef3c7; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
+  @media (hover: hover) { .item:hover { border-color: #86efac; } }
+  .item:has(input:checked) { border-color: var(--green); background: var(--green-soft); }
+  .item:has(input:checked) .fee { color: var(--green-dark); background: #dcfce7; }
+  .item:has(input:focus-visible) { box-shadow: 0 0 0 3px rgba(22,163,74,.35); }
+  .item:has(input:checked)::before {
+    content: "✓"; position: absolute; top: -8px; left: -8px;
+    width: 20px; height: 20px; border-radius: 50%; background: var(--green); color: #fff;
+    font-size: 12px; font-weight: 900; display: grid; place-items: center;
+  }
+  .no-results { grid-column: 1 / -1; color: var(--muted); font-size: 14px; padding: 8px 2px; display: none; }
+
+  /* ---------- Fields ---------- */
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-weight: 700; margin-bottom: 7px; font-size: 14px; color: var(--ink-2); }
+  .field label .opt { font-weight: 500; color: var(--muted); }
+  .field input, .field textarea, .field select {
+    width: 100%; padding: 13px 14px; border: 2px solid var(--line); border-radius: 10px;
+    font-size: 16px; font-family: inherit; outline: none; color: var(--ink);
+    transition: border-color .15s ease, box-shadow .15s ease; background: #fff;
+    -webkit-appearance: none; appearance: none;
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(22,163,74,.15); }
+  .field .hint { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .field.error input, .field.error textarea, .field.error select { border-color: var(--danger); }
+  .field .error-msg { color: var(--danger); font-size: 13px; font-weight: 600; margin-top: 6px; display: none; }
+  .field.error .error-msg { display: block; }
+  .field.error .hint { display: none; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  .grid-3 { display: grid; grid-template-columns: 2fr 1fr 1.2fr; gap: 0 12px; }
+  @media (max-width: 480px) {
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-3 .field:first-child { grid-column: 1 / -1; }
+  }
+  .reveal { display: none; }
+  .reveal.show { display: block; animation: fade .2s ease; }
+
+  /* Date quick picks */
+  .date-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .chip {
+    border: 2px solid var(--line); background: #fff; color: var(--ink-2);
+    border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: inherit;
+  }
+  .chip.on { border-color: var(--green); background: var(--green-soft); color: var(--green-dark); }
+
+  /* ---------- Review ---------- */
+  .estimate-box {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%); color: #fff;
+    border-radius: 14px; padding: 18px; margin-bottom: 16px;
+  }
+  .estimate-box .top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .estimate-box .lbl { font-size: 13px; opacity: .9; font-weight: 600; }
+  .estimate-box .amount { font-size: 30px; font-weight: 900; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .estimate-box .note { font-size: 12px; opacity: .9; }
+  .breakdown { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.25); font-size: 14px; display: grid; gap: 4px; }
+  .breakdown div { display: flex; justify-content: space-between; gap: 12px; opacity: .95; }
+
+  .summary { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 18px; }
+  .summary .row { display: grid; grid-template-columns: 96px 1fr auto; gap: 12px; padding: 12px 14px; font-size: 14px; align-items: start; }
+  .summary .row + .row { border-top: 1px solid var(--line); }
+  .summary .k { color: var(--muted); font-weight: 600; }
+  .summary .v { font-weight: 600; word-break: break-word; line-height: 1.45; }
+  .summary .edit { background: none; border: 0; color: var(--green-dark); font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; padding: 0; }
+  .summary .edit:hover { text-decoration: underline; }
+
+  .consent { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.5; }
+
+  /* ---------- Buttons / nav ---------- */
+  .btn {
+    border: none; border-radius: 12px; padding: 14px 22px;
+    font-size: 16px; font-weight: 800; cursor: pointer; font-family: inherit;
+    transition: transform .08s ease, background .15s ease, opacity .15s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn:disabled { opacity: .6; cursor: wait; }
+  .btn-primary { background: var(--green); color: #fff; box-shadow: 0 2px 0 var(--green-dark); }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-ghost { background: transparent; color: var(--muted); padding-left: 8px; padding-right: 8px; }
+  .btn-ghost:hover { color: var(--ink); }
+  .btn-block { width: 100%; padding: 17px; font-size: 17px; }
+  .btn:focus-visible, .chip:focus-visible, .edit:focus-visible { outline: 3px solid rgba(22,163,74,.45); outline-offset: 2px; }
+
+  .nav {
+    position: sticky; bottom: 0; z-index: 5;
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,.96);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border-top: 1px solid var(--line);
+    padding: 12px 24px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    border-radius: 0 0 18px 18px;
+    margin-top: 18px;
+  }
+  @media (max-width: 480px) { .nav { padding-left: 16px; padding-right: 16px; } }
+  .nav .est { flex: 1; text-align: center; line-height: 1.2; min-width: 0; }
+  .nav .est .l { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  .nav .est .a { font-size: 18px; font-weight: 900; color: var(--green-dark); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .nav .est.empty .a { color: #9ca3af; font-size: 14px; font-weight: 700; }
+  .nav .spacer { width: 72px; flex: none; }
+  .bump { animation: bump .35s ease; }
+  @keyframes bump { 40% { transform: scale(1.08); } }
+
+  /* ---------- Success ---------- */
+  .success { text-align: center; padding: 28px 8px 24px; }
+  .success .check {
+    width: 76px; height: 76px; margin: 0 auto 18px;
+    background: var(--green); color: #fff; border-radius: 50%;
+    display: grid; place-items: center; font-size: 38px; font-weight: 900;
+    box-shadow: 0 0 0 10px var(--green-soft);
+    animation: pop .4s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+  .success h2 { margin-bottom: 10px; font-size: 26px; }
+  .success p { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 440px; margin: 0 auto; }
+  .next-steps { text-align: left; max-width: 400px; margin: 22px auto 0; display: grid; gap: 12px; }
+  .next-steps div { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--ink-2); line-height: 1.45; }
+  .next-steps b.n { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); display: grid; place-items: center; font-size: 12px; border: 1px solid var(--green-line); }
+  .preview-note { margin-top: 18px; font-size: 13px; background: #fffbeb; color: #92400e; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 12px; }
+
+  .fineprint { text-align: center; color: var(--muted); font-size: 12px; margin-top: 18px; line-height: 1.6; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Quick Junk Removal home">
+      <span class="logo" aria-hidden="true">♻️</span>
+      <span>Quick Junk Removal</span>
+    </a>
+    <div class="topbar-right">
+      <span class="estimate-chip" id="chipEstimate" aria-live="polite">Free quote</span>
+      <a class="call-btn" id="callBtn" href="#">📞 Call</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>See your junk removal price in about 60 seconds</h1>
+      <p>Tell us what's going, pick a time, and get a free, no-obligation quote by text and email.</p>
+      <div class="trust">
+        <span>✓ Free quote</span>
+        <span>✓ No obligation</span>
+        <span>✓ Price shown up front</span>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <div class="card">
+      <form id="quiz" novalidate autocomplete="on">
+        <div class="card-body">
+          <div class="progress-head">
+            <span class="name" id="stepName">Property</span>
+            <span class="count" id="stepCount">Step 1 of 7</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Quote progress">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+
+          <!-- honeypot: real people never see or fill this -->
+          <div class="hp" aria-hidden="true">
+            <label for="company_site">Leave this empty</label>
+            <input type="text" id="company_site" name="company_site" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <!-- Step 1: Property -->
+          <section class="step active" data-step="0" data-label="Property">
+            <h2>What kind of property is it?</h2>
+            <p class="sub">So we send the right crew and truck.</p>
+            <div class="step-error" role="alert">Please pick one to continue.</div>
+            <div class="options cols-2" role="radiogroup" aria-label="Property type">
+              <label class="option"><input type="radio" name="property" value="Single-family home" /><span class="emoji">🏠</span><span class="text">House</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="property" value="Apartment / condo" /><span class="emoji">🏢</span><span class="text">Apartment / condo</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="property" value="Townhouse" /><span class="emoji">🏘️</span><span class="text">Townhouse</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="property" value="Business / office" /><span class="emoji">🏬</span><span class="text">Business / office</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="property" value="Construction site" /><span class="emoji">🚧</span><span class="text">Construction site</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="property" value="Storage unit" /><span class="emoji">🔑</span><span class="text">Storage unit</span><span class="tick"></span></label>
+            </div>
+          </section>
+
+          <!-- Step 2: Items -->
+          <section class="step" data-step="1" data-label="Items">
+            <h2>What needs to go?</h2>
+            <p class="sub">Tap everything that applies. Items tagged <b>+$</b> need special disposal (Freon, e-waste, etc.).</p>
+            <div class="step-error" role="alert">Pick at least one item, or describe it below.</div>
+            <div class="item-tools">
+              <div class="search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                <label for="itemSearch" class="sr-only">Search items</label>
+                <input type="search" id="itemSearch" placeholder="Search items…" autocomplete="off" />
+              </div>
+              <span class="sel-count" id="selCount" aria-live="polite"></span>
+            </div>
+            <div class="item-grid" id="itemGrid"></div>
+            <div style="text-align:right; margin-top:8px;"><button type="button" class="clear-link" id="clearItems">Clear all</button></div>
+            <div class="field" style="margin-top:14px;">
+              <label for="otherItems">Anything else? <span class="opt">(optional)</span></label>
+              <input type="text" id="otherItems" name="otherItems" placeholder="e.g. old swing set, 10 paint cans…" />
+            </div>
+          </section>
+
+          <!-- Step 3: Volume -->
+          <section class="step" data-step="2" data-label="Size">
+            <h2>About how much is there?</h2>
+            <p class="sub">Best guess is fine — we confirm on-site before any work starts.</p>
+            <div class="step-error" role="alert">Please pick a size to continue.</div>
+            <div class="options" role="radiogroup" aria-label="Load size">
+              <label class="option"><input type="radio" name="volume" value="quarter" /><span class="emoji">👜</span><span class="text">A few items<small>Fits in a pickup bed</small></span><span class="right">from $79</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="volume" value="half" /><span class="emoji">🛻</span><span class="text">Half truck load<small>A room's worth</small></span><span class="right">from $149</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="volume" value="full" /><span class="emoji">🚚</span><span class="text">Full truck load<small>A garage or basement cleanout</small></span><span class="right">from $269</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="volume" value="multiple" /><span class="emoji">🚛</span><span class="text">Multiple loads<small>Whole-house or estate cleanout</small></span><span class="right">from $469</span><span class="tick"></span></label>
+            </div>
+          </section>
+
+          <!-- Step 4: Location + access -->
+          <section class="step" data-step="3" data-label="Access">
+            <h2>Where is it, and how do we get to it?</h2>
+            <p class="sub">We do all the lifting — this just helps us plan.</p>
+            <div class="step-error" role="alert">Please answer both questions.</div>
+
+            <div class="section-label">Where is the junk? <span style="font-weight:500;color:var(--muted)">(pick all)</span></div>
+            <div class="options cols-2">
+              <label class="option"><input type="checkbox" name="location" value="Inside" /><span class="emoji">🛋️</span><span class="text">Inside</span><span class="tick"></span></label>
+              <label class="option"><input type="checkbox" name="location" value="Garage" /><span class="emoji">🚪</span><span class="text">Garage</span><span class="tick"></span></label>
+              <label class="option"><input type="checkbox" name="location" value="Basement" /><span class="emoji">⬇️</span><span class="text">Basement</span><span class="tick"></span></label>
+              <label class="option"><input type="checkbox" name="location" value="Attic" /><span class="emoji">⬆️</span><span class="text">Attic</span><span class="tick"></span></label>
+              <label class="option"><input type="checkbox" name="location" value="Outdoors / yard" /><span class="emoji">🌳</span><span class="text">Yard / outside</span><span class="tick"></span></label>
+              <label class="option"><input type="checkbox" name="location" value="Curbside" /><span class="emoji">🛣️</span><span class="text">Curbside</span><span class="tick"></span></label>
+            </div>
+
+            <div class="section-label">Any stairs?</div>
+            <div class="options" role="radiogroup" aria-label="Access">
+              <label class="option"><input type="radio" name="access" value="ground" /><span class="emoji">🏡</span><span class="text">Ground level / driveway</span><span class="right">No fee</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="access" value="elevator" /><span class="emoji">🛗</span><span class="text">Elevator access</span><span class="right">No fee</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="access" value="stairs" /><span class="emoji">🪜</span><span class="text">Stairs</span><span class="right">+$35</span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="access" value="unsure" /><span class="emoji">🤷</span><span class="text">Not sure</span><span class="right">+$20</span><span class="tick"></span></label>
+            </div>
+            <div class="field reveal" id="stairsField" style="margin-top:14px;">
+              <label for="stairs">How many flights?</label>
+              <select id="stairs" name="stairs">
+                <option value="1">1 flight (+$35)</option>
+                <option value="2">2 flights (+$50)</option>
+                <option value="3">3 flights (+$65)</option>
+                <option value="4">4+ flights (+$80)</option>
+              </select>
+            </div>
+          </section>
+
+          <!-- Step 5: Address + schedule -->
+          <section class="step" data-step="4" data-label="When & where">
+            <h2>When and where?</h2>
+            <p class="sub">Pick a day that works — we'll confirm the exact arrival window.</p>
+            <div class="step-error" role="alert">Please fix the highlighted fields.</div>
+
+            <div class="field" id="streetField">
+              <label for="street">Street address</label>
+              <input type="text" id="street" name="street" placeholder="123 Main St" autocomplete="street-address" />
+              <div class="error-msg">Please enter the pickup address.</div>
+            </div>
+            <div class="grid-3">
+              <div class="field" id="cityField">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" placeholder="Springfield" autocomplete="address-level2" />
+                <div class="error-msg">Required</div>
+              </div>
+              <div class="field" id="stateField">
+                <label for="state">State</label>
+                <select id="state" name="state" autocomplete="address-level1">
+                  <option value="">—</option>
+                  <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+                  <option>CO</option><option>CT</option><option>DE</option><option>DC</option><option>FL</option>
+                  <option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option>
+                  <option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option>
+                  <option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option>
+                  <option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option>
+                  <option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option>
+                  <option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option>
+                  <option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option>
+                  <option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option>
+                  <option>WY</option>
+                </select>
+                <div class="error-msg">Required</div>
+              </div>
+              <div class="field" id="zipField">
+                <label for="zip">ZIP</label>
+                <input type="text" id="zip" name="zip" inputmode="numeric" maxlength="5" placeholder="90210" autocomplete="postal-code" />
+                <div class="error-msg">5 digits</div>
+              </div>
+            </div>
+
+            <div class="field" id="dateField">
+              <label for="date">Preferred day</label>
+              <div class="date-chips" id="dateChips"></div>
+              <input type="date" id="date" name="date" />
+              <div class="error-msg">Please choose a day.</div>
+            </div>
+
+            <div class="section-label">Time window <span style="font-weight:500;color:var(--muted)">(optional)</span></div>
+            <div class="options cols-2">
+              <label class="option"><input type="radio" name="time" value="Morning (8am–12pm)" /><span class="emoji">🌅</span><span class="text">Morning<small>8am–12pm</small></span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="time" value="Afternoon (12pm–4pm)" /><span class="emoji">☀️</span><span class="text">Afternoon<small>12pm–4pm</small></span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="time" value="Evening (4pm–7pm)" /><span class="emoji">🌇</span><span class="text">Evening<small>4pm–7pm</small></span><span class="tick"></span></label>
+              <label class="option"><input type="radio" name="time" value="Anytime" /><span class="emoji">🕐</span><span class="text">Anytime<small>Flexible</small></span><span class="tick"></span></label>
+            </div>
+          </section>
+
+          <!-- Step 6: Contact -->
+          <section class="step" data-step="5" data-label="Contact">
+            <h2>Where should we send your quote?</h2>
+            <p class="sub">We'll text and email your free, no-obligation estimate.</p>
+            <div class="step-error" role="alert">Please fix the highlighted fields.</div>
+            <div class="field" id="nameField">
+              <label for="name">Full name</label>
+              <input type="text" id="name" name="name" placeholder="Jane Smith" autocomplete="name" />
+              <div class="error-msg">Please enter your name.</div>
+            </div>
+            <div class="grid-2">
+              <div class="field" id="phoneField">
+                <label for="phone">Mobile phone</label>
+                <input type="tel" id="phone" name="phone" placeholder="(555) 555-5555" autocomplete="tel-national" inputmode="tel" />
+                <div class="hint">For your quote text. No spam.</div>
+                <div class="error-msg">Enter a 10-digit phone number.</div>
+              </div>
+              <div class="field" id="emailField">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" />
+                <div class="hint">For your detailed quote.</div>
+                <div class="error-msg">Enter a valid email.</div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="notes">Notes for the crew <span class="opt">(optional)</span></label>
+              <textarea id="notes" name="notes" rows="3" placeholder="Gate code, parking, which items are upstairs…"></textarea>
+            </div>
+          </section>
+
+          <!-- Step 7: Review -->
+          <section class="step" data-step="6" data-label="Review">
+            <h2>Look good?</h2>
+            <p class="sub">Check your details, then send. Nothing is booked until you confirm with us.</p>
+
+            <div class="estimate-box">
+              <div class="top">
+                <div>
+                  <div class="lbl">Estimated total</div>
+                  <div class="amount" id="reviewEstimate">—</div>
+                </div>
+                <div class="note">Final price confirmed on-site<br>before we start.</div>
+              </div>
+              <div class="breakdown" id="breakdown"></div>
+            </div>
+
+            <div class="summary" id="summaryBox"></div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Get My Free Quote →</button>
+            <p class="consent">By sending, you agree we can contact you by text, call and email about this quote. Message &amp; data rates may apply.</p>
+          </section>
+        </div>
+
+        <div class="nav" id="nav">
+          <button type="button" class="btn btn-ghost" id="backBtn">← Back</button>
+          <div class="est empty" id="navEst" aria-live="polite">
+            <div class="l">Estimate</div>
+            <div class="a" id="navAmount">Pick a size</div>
+          </div>
+          <button type="button" class="btn btn-primary" id="nextBtn">Next →</button>
+        </div>
+      </form>
+    </div>
+
+    <p class="fineprint">Your info is only used to prepare and send your quote.<br>© <span id="yr"></span> Quick Junk Removal</p>
+  </main>
+
+<script>
+(function () {
+  /* =========================================================
+     ⚙️ SETTINGS — edit these
+     ========================================================= */
+
+  // Formspree form ID so submissions reach your inbox.
+  // 1. Go to https://formspree.io → "New form" (free, no card needed)
+  // 2. Copy the 8-character ID from the endpoint URL (https://formspree.io/f/XXXXXXXX)
+  // 3. Paste it between the quotes, e.g.  FORM_ENDPOINT = "abcdwxyz";
+  // Leave it empty ("") and the form runs as a local preview only.
+  const FORM_ENDPOINT = "";
+
+  // Your business phone. When filled in, a "Call" button appears in the header
+  // and on the success / error screens. Example: "(555) 123-4567"
+  const BUSINESS_PHONE = "";
+
+  /* =========================================================
+     DATA
+     ========================================================= */
+  const ITEMS = [
+    { cat: "Furniture" },
+    { id: "sofa", label: "Sofa / couch", emoji: "🛋️", fee: 0 },
+    { id: "mattress", label: "Mattress / box spring", emoji: "🛏️", fee: 30 },
+    { id: "bedframe", label: "Bed frame", emoji: "🛌", fee: 0 },
+    { id: "dresser", label: "Dresser / wardrobe", emoji: "🗄️", fee: 0 },
+    { id: "table", label: "Table", emoji: "🍽️", fee: 0 },
+    { id: "chairs", label: "Chairs", emoji: "🪑", fee: 0 },
+    { id: "desk", label: "Desk", emoji: "🖥️", fee: 0 },
+    { id: "bookshelf", label: "Bookshelf", emoji: "📚", fee: 0 },
+    { id: "rug", label: "Rug / carpet", emoji: "🧶", fee: 0 },
+    { cat: "Appliances" },
+    { id: "fridge", label: "Refrigerator / freezer", emoji: "🧊", fee: 50 },
+    { id: "washer", label: "Washer / dryer", emoji: "🌀", fee: 40 },
+    { id: "dishwasher", label: "Dishwasher", emoji: "🫧", fee: 25 },
+    { id: "stove", label: "Stove / oven", emoji: "🍳", fee: 25 },
+    { id: "waterheater", label: "Water heater", emoji: "♨️", fee: 40 },
+    { id: "ac", label: "Air conditioner", emoji: "❄️", fee: 50 },
+    { id: "microwave", label: "Microwave", emoji: "📡", fee: 15 },
+    { cat: "Electronics" },
+    { id: "tv", label: "TV", emoji: "📺", fee: 25 },
+    { id: "computer", label: "Computer / monitor", emoji: "💻", fee: 20 },
+    { id: "printer", label: "Printer", emoji: "🖨️", fee: 15 },
+    { id: "ewaste", label: "Other e-waste", emoji: "🔋", fee: 20 },
+    { cat: "Yard & Garden" },
+    { id: "branches", label: "Branches / brush", emoji: "🌿", fee: 0 },
+    { id: "grass", label: "Grass / leaves", emoji: "🍂", fee: 0 },
+    { id: "sod", label: "Sod / dirt / rocks", emoji: "🪨", fee: 0 },
+    { id: "fence", label: "Fence panels", emoji: "🪵", fee: 0 },
+    { cat: "Construction & Renovation" },
+    { id: "drywall", label: "Drywall", emoji: "🧱", fee: 0 },
+    { id: "lumber", label: "Lumber / wood", emoji: "🪚", fee: 0 },
+    { id: "concrete", label: "Concrete / bricks", emoji: "🧱", fee: 0 },
+    { id: "roofing", label: "Roofing shingles", emoji: "🏠", fee: 0 },
+    { id: "tiles", label: "Tiles / flooring", emoji: "🔲", fee: 0 },
+    { cat: "Big & Bulky" },
+    { id: "hottub", label: "Hot tub", emoji: "🛁", fee: 150 },
+    { id: "piano", label: "Piano", emoji: "🎹", fee: 100 },
+    { id: "pooltable", label: "Pool table", emoji: "🎱", fee: 75 },
+    { id: "exercise", label: "Exercise equipment", emoji: "🏋️", fee: 40 },
+    { id: "shed", label: "Shed / structure", emoji: "🏚️", fee: 100 },
+    { id: "safe", label: "Safe", emoji: "🔐", fee: 60 },
+    { cat: "General" },
+    { id: "boxes", label: "Boxes", emoji: "📦", fee: 0 },
+    { id: "trashbags", label: "Bags of trash", emoji: "🗑️", fee: 0 },
+    { id: "clutter", label: "Misc clutter", emoji: "🧺", fee: 0 },
+    { id: "hazardous", label: "Paint / chemicals", emoji: "☣️", fee: 75 },
+  ];
+  const ITEM_BY_ID = Object.fromEntries(ITEMS.filter(i => i.id).map(i => [i.id, i]));
+
+  const VOLUME_BASE  = { quarter: 79, half: 149, full: 269, multiple: 469 };
+  const VOLUME_LABEL = { quarter: "A few items", half: "Half truck load", full: "Full truck load", multiple: "Multiple truck loads" };
+  const ACCESS_LABEL = { ground: "Ground level", elevator: "Elevator", stairs: "Stairs", unsure: "Not sure" };
+  const AUTO_ADVANCE = { property: 0, volume: 2 }; // single-choice questions that move on by themselves
+  const STORE_KEY = "qjr-quote-v2";
+
+  /* =========================================================
+     DOM
+     ========================================================= */
+  const $ = (id) => document.getElementById(id);
+  const quiz = $("quiz");
+  const steps = Array.from(document.querySelectorAll(".step"));
+  const TOTAL = steps.length;
+  const nextBtn = $("nextBtn"), backBtn = $("backBtn"), nav = $("nav");
+  let current = 0;
+  let submitted = false;
+
+  const state = {};
+
+  /* =========================================================
+     HELPERS
+     ========================================================= */
+  const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmt = (n) => "$" + n.toLocaleString();
+  const pad = (n) => String(n).padStart(2, "0");
+  const ymd = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); // local, not UTC
+  const prettyDate = (s) => {
+    if (!s) return "";
+    const [y, m, d] = s.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  };
+  const radio = (name) => (quiz.querySelector('input[name="' + name + '"]:checked') || {}).value || "";
+  const checks = (name) => Array.from(quiz.querySelectorAll('input[name="' + name + '"]:checked')).map(i => i.value);
+  const val = (id) => $(id).value.trim();
+  const telHref = () => "tel:" + BUSINESS_PHONE.replace(/[^\d+]/g, "");
+
+  /* =========================================================
+     BUILD UI
+     ========================================================= */
+  function buildItemGrid() {
+    const grid = $("itemGrid");
+    let html = "";
+    ITEMS.forEach(item => {
+      if (item.cat) {
+        html += '<div class="cat-label">' + esc(item.cat) + "</div>";
+      } else {
+        html +=
+          '<label class="item" data-search="' + esc(item.label.toLowerCase() + " " + item.id) + '">' +
+            '<input type="checkbox" name="items" value="' + item.id + '" />' +
+            '<span class="emoji" aria-hidden="true">' + item.emoji + "</span>" +
+            "<span>" + esc(item.label) + "</span>" +
+            (item.fee ? '<span class="fee">+$' + item.fee + "</span>" : "") +
+          "</label>";
+      }
+    });
+    html += '<div class="no-results" id="noResults">No match — add it in “Anything else?” below.</div>';
+    grid.innerHTML = html;
+  }
+
+  function filterItems(q) {
+    q = q.trim().toLowerCase();
+    const grid = $("itemGrid");
+    let lastCat = null, catHasMatch = false, any = false;
+    Array.from(grid.children).forEach(el => {
+      if (el.classList.contains("cat-label")) {
+        if (lastCat) lastCat.style.display = catHasMatch ? "" : "none";
+        lastCat = el; catHasMatch = false;
+      } else if (el.classList.contains("item")) {
+        const hit = !q || el.dataset.search.includes(q);
+        el.style.display = hit ? "" : "none";
+        if (hit) { catHasMatch = true; any = true; }
+      }
+    });
+    if (lastCat) lastCat.style.display = catHasMatch ? "" : "none";
+    $("noResults").style.display = any ? "none" : "block";
+  }
+
+  function buildDateChips() {
+    const today = new Date();
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    const sat = new Date(today); sat.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7 || 7));
+    const opts = [
+      { label: "Today", d: today },
+      { label: "Tomorrow", d: tomorrow },
+      { label: "Sat " + sat.toLocaleDateString(undefined, { month: "short", day: "numeric" }), d: sat },
+    ];
+    // Avoid duplicate if tomorrow is Saturday
+    const seen = new Set();
+    $("dateChips").innerHTML = opts.filter(o => { const k = ymd(o.d); if (seen.has(k)) return false; seen.add(k); return true; })
+      .map(o => '<button type="button" class="chip" data-date="' + ymd(o.d) + '">' + o.label + "</button>").join("");
+    $("date").min = ymd(today);
+  }
+
+  function syncDateChips() {
+    const v = $("date").value;
+    document.querySelectorAll("#dateChips .chip").forEach(c => c.classList.toggle("on", c.dataset.date === v));
+  }
+
+  /* =========================================================
+     STATE
+     ========================================================= */
+  function collect() {
+    Object.assign(state, {
+      property: radio("property"),
+      items: checks("items"),
+      otherItems: val("otherItems"),
+      volume: radio("volume"),
+      location: checks("location"),
+      access: radio("access"),
+      stairs: $("stairs").value,
+      street: val("street"), city: val("city"), state: $("state").value, zip: val("zip"),
+      date: $("date").value, time: radio("time"),
+      name: val("name"), phone: val("phone"), email: val("email"), notes: val("notes"),
+    });
+  }
+
+  function save() {
+    if (submitted) return;
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ s: state, step: current, t: Date.now() })); } catch (e) {}
+  }
+
+  function restore() {
+    let saved;
+    try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); } catch (e) { return; }
+    if (!saved || !saved.s || Date.now() - saved.t > 7 * 864e5) return; // forget after a week
+    const s = saved.s;
+    const setRadio = (name, v) => { const el = quiz.querySelector('input[name="' + name + '"][value="' + CSS.escape(v || "") + '"]'); if (el) el.checked = true; };
+    const setChecks = (name, arr) => (arr || []).forEach(v => setRadio(name, v));
+    setRadio("property", s.property); setChecks("items", s.items); setRadio("volume", s.volume);
+    setChecks("location", s.location); setRadio("access", s.access); setRadio("time", s.time);
+    ["otherItems", "stairs", "street", "city", "state", "zip", "name", "phone", "email", "notes"].forEach(k => { if (s[k]) $(k).value = s[k]; });
+    if (s.date && s.date >= ymd(new Date())) $("date").value = s.date;
+    current = Math.min(Math.max(0, saved.step | 0), TOTAL - 1);
+  }
+
+  /* =========================================================
+     ESTIMATE
+     ========================================================= */
+  function computeEstimate() {
+    const base = VOLUME_BASE[state.volume];
+    if (!base) return null;
+    const lines = [[VOLUME_LABEL[state.volume], base]];
+
+    state.items.forEach(id => {
+      const it = ITEM_BY_ID[id];
+      if (it && it.fee) lines.push([it.label + " disposal", it.fee]);
+    });
+
+    if (state.access === "stairs") {
+      const flights = parseInt(state.stairs, 10) || 1;
+      lines.push(["Stairs (" + (flights >= 4 ? "4+" : flights) + " flight" + (flights > 1 ? "s" : "") + ")", 35 + (flights - 1) * 15]);
+    } else if (state.access === "unsure") {
+      lines.push(["Access TBD", 20]);
+    }
+
+    const low = lines.reduce((a, l) => a + l[1], 0);
+    const high = Math.round((low * 1.2) / 10) * 10;
+    return { low, high, lines, text: fmt(low) + " – " + fmt(high) };
+  }
+
+  let lastEstText = "";
+  function updateEstimate() {
+    const est = computeEstimate();
+    const navEst = $("navEst"), amt = $("navAmount"), chip = $("chipEstimate");
+    if (est) {
+      navEst.classList.remove("empty");
+      amt.textContent = est.text;
+      chip.textContent = est.text;
+      $("reviewEstimate").textContent = est.text;
+      $("breakdown").innerHTML = est.lines.map(l => "<div><span>" + esc(l[0]) + "</span><span>" + fmt(l[1]) + "</span></div>").join("");
+      if (lastEstText && lastEstText !== est.text) { [amt, chip].forEach(el => { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }); }
+      lastEstText = est.text;
+    } else {
+      navEst.classList.add("empty");
+      amt.textContent = current < 2 ? "Pick a size" : "—";
+      chip.textContent = "Free quote";
+      $("reviewEstimate").textContent = "—";
+      $("breakdown").innerHTML = "";
+      lastEstText = "";
+    }
+  }
+
+  function updateItemCount() {
+    const n = state.items.length;
+    const el = $("selCount");
+    el.textContent = n + " selected";
+    el.classList.toggle("show", n > 0);
+    $("clearItems").classList.toggle("show", n > 0);
+  }
+
+  /* =========================================================
+     REVIEW SUMMARY
+     ========================================================= */
+  function buildSummary() {
+    const itemLabels = state.items.map(id => (ITEM_BY_ID[id] || {}).label || id);
+    if (state.otherItems) itemLabels.push(state.otherItems);
+    const accessTxt = state.access === "stairs"
+      ? "Stairs — " + (state.stairs === "4" ? "4+" : state.stairs || "1") + " flight(s)"
+      : ACCESS_LABEL[state.access] || "—";
+
+    const rows = [
+      ["Property", state.property, 0],
+      ["Items", itemLabels.join(", "), 1],
+      ["Size", VOLUME_LABEL[state.volume], 2],
+      ["Where", [state.location.join(", "), accessTxt].filter(Boolean).join(" · "), 3],
+      ["Address", [state.street, state.city, (state.state + " " + state.zip).trim()].filter(Boolean).join(", "), 4],
+      ["When", prettyDate(state.date) + (state.time ? " · " + state.time : ""), 4],
+      ["Contact", [state.name, state.phone, state.email].filter(Boolean).join("<br>"), 5, true],
+    ];
+    if (state.notes) rows.push(["Notes", state.notes, 5]);
+
+    $("summaryBox").innerHTML = rows.map(r => {
+      const v = r[3] ? r[1].split("<br>").map(esc).join("<br>") : esc(r[1] || "—");
+      return '<div class="row"><span class="k">' + r[0] + '</span><span class="v">' + v +
+        '</span><button type="button" class="edit" data-goto="' + r[2] + '">Edit</button></div>';
+    }).join("");
+  }
+
+  /* =========================================================
+     VALIDATION
+     ========================================================= */
+  function setFieldError(id, bad) { $(id + "Field").classList.toggle("error", bad); return !bad; }
+
+  function validate(i) {
+    switch (i) {
+      case 0: return !!state.property;
+      case 1: return state.items.length > 0 || state.otherItems.length > 0;
+      case 2: return !!state.volume;
+      case 3: return state.location.length > 0 && !!state.access;
+      case 4: {
+        const r = [
+          setFieldError("street", !state.street),
+          setFieldError("city", !state.city),
+          setFieldError("state", !state.state),
+          setFieldError("zip", !/^\d{5}$/.test(state.zip)),
+          setFieldError("date", !state.date || state.date < ymd(new Date())),
+        ];
+        return r.every(Boolean);
+      }
+      case 5: {
+        const r = [
+          setFieldError("name", !state.name),
+          setFieldError("phone", state.phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "").length !== 10),
+          setFieldError("email", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(state.email)),
+        ];
+        return r.every(Boolean);
+      }
+      default: return true;
+    }
+  }
+
+  function showStepError(i, on) {
+    const el = steps[i].querySelector(".step-error");
+    if (!el) return;
+    el.classList.remove("show");
+    if (on) { void el.offsetWidth; el.classList.add("show"); }
+  }
+
+  function firstInvalid(i) {
+    const bad = steps[i].querySelector(".field.error input, .field.error select");
+    if (bad) bad.focus();
+    else steps[i].querySelector(".step-error").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  /* =========================================================
+     NAVIGATION
+     ========================================================= */
+  function render(scroll) {
+    steps.forEach((s, i) => s.classList.toggle("active", i === current));
+    const label = steps[current].dataset.label;
+    $("stepName").textContent = label;
+    $("stepCount").textContent = "Step " + (current + 1) + " of " + TOTAL;
+    $("progressFill").style.width = Math.round(((current + 1) / TOTAL) * 100) + "%";
+    document.querySelector(".progress-bar").setAttribute("aria-valuenow", Math.round(((current + 1) / TOTAL) * 100));
+
+    document.body.classList.toggle("compact", current > 0);
+    backBtn.style.visibility = current === 0 ? "hidden" : "visible";
+    const isLast = current === TOTAL - 1;
+    nextBtn.style.display = isLast ? "none" : "";
+    nextBtn.textContent = current === TOTAL - 2 ? "Review →" : "Next →";
+
+    $("stairsField").classList.toggle("show", state.access === "stairs");
+    if (isLast) buildSummary();
+    updateEstimate();
+    save();
+
+    if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function goTo(i) {
+    current = Math.max(0, Math.min(TOTAL - 1, i));
+    render(true);
+  }
+
+  function goNext() {
+    collect();
+    if (!validate(current)) {
+      showStepError(current, true);
+      firstInvalid(current);
+      return;
+    }
+    showStepError(current, false);
+    goTo(current + 1);
+  }
+
+  /* =========================================================
+     SUBMIT
+     ========================================================= */
+  quiz.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    collect();
+    // Re-check every step; jump to the first one with a problem.
+    for (let i = 0; i < TOTAL - 1; i++) {
+      if (!validate(i)) { goTo(i); showStepError(i, true); return; }
+    }
+    if ($("company_site").value) return; // bot
+
+    const est = computeEstimate();
+    const itemLabels = state.items.map(id => (ITEM_BY_ID[id] || {}).label || id);
+    const payload = {
+      _subject: "New junk removal quote: " + state.name + " — " + (est ? est.text : ""),
+      _replyto: state.email,
+      name: state.name,
+      phone: state.phone,
+      email: state.email,
+      estimate: est ? est.text : "—",
+      estimate_breakdown: est ? est.lines.map(l => l[0] + ": " + fmt(l[1])).join("; ") : "",
+      property: state.property,
+      items: itemLabels.join(", "),
+      other_items: state.otherItems,
+      size: VOLUME_LABEL[state.volume] || "",
+      location: state.location.join(", "),
+      access: ACCESS_LABEL[state.access] || "",
+      stairs_flights: state.access === "stairs" ? state.stairs : "",
+      address: [state.street, state.city, state.state, state.zip].filter(Boolean).join(", "),
+      date: state.date,
+      time_window: state.time || "Not specified",
+      notes: state.notes,
+    };
+
+    if (!FORM_ENDPOINT) { showSuccess(est, false); return; }
+
+    const btn = $("submitBtn");
+    btn.disabled = true; btn.textContent = "Sending…";
+    try {
+      const res = await fetch("https://formspree.io/f/" + FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Formspree returned " + res.status);
+      showSuccess(est, true);
+    } catch (err) {
+      console.error("Send failed:", err);
+      btn.disabled = false; btn.textContent = "Try again →";
+      let err$ = $("sendError");
+      if (!err$) {
+        err$ = document.createElement("div");
+        err$.id = "sendError"; err$.className = "step-error show"; err$.setAttribute("role", "alert");
+        btn.parentNode.insertBefore(err$, btn);
+      }
+      err$.innerHTML = "We couldn't send your request. Check your connection and try again" +
+        (BUSINESS_PHONE ? ', or call us at <a href="' + telHref() + '">' + esc(BUSINESS_PHONE) + "</a>." : ".");
+    }
+  });
+
+  function showSuccess(est, sent) {
+    submitted = true;
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    document.body.classList.add("compact");
+    $("chipEstimate").textContent = "Submitted ✓";
+    const first = esc((state.name || "there").split(" ")[0]);
+
+    quiz.innerHTML =
+      '<div class="card-body"><div class="success">' +
+        '<div class="check">✓</div>' +
+        "<h2>You're all set, " + first + "!</h2>" +
+        "<p>Your " + (est ? "<b>" + est.text + "</b> " : "") + "quote request is in. We'll text <b>" + esc(state.phone) +
+        "</b> and email <b>" + esc(state.email) + "</b> shortly.</p>" +
+        '<div class="next-steps">' +
+          '<div><b class="n">1</b><span>We review your list and confirm your quote.</span></div>' +
+          '<div><b class="n">2</b><span>We lock in your arrival window for <b>' + esc(prettyDate(state.date)) + "</b>.</span></div>" +
+          '<div><b class="n">3</b><span>Our crew arrives, confirms the price on-site, and hauls it all away.</span></div>' +
+        "</div>" +
+        (BUSINESS_PHONE ? '<p style="margin-top:20px">Need it sooner? <a href="' + telHref() + '"><b>Call ' + esc(BUSINESS_PHONE) + "</b></a></p>" : "") +
+        (sent ? "" : '<div class="preview-note">Preview mode: no form endpoint is set, so nothing was actually sent. Add your Formspree ID at the top of the script.</div>') +
+        '<div style="margin-top:22px"><button type="button" class="btn btn-ghost" onclick="location.reload()">Start a new quote</button></div>' +
+      "</div></div>";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /* =========================================================
+     EVENTS
+     ========================================================= */
+  nextBtn.addEventListener("click", goNext);
+  backBtn.addEventListener("click", () => goTo(current - 1));
+
+  // Any change → refresh state + estimate, clear errors once fixed.
+  quiz.addEventListener("input", onChange);
+  quiz.addEventListener("change", onChange);
+  function onChange(e) {
+    if (e.target.id === "itemSearch") return;
+    collect();
+    if (e.target.name === "items") updateItemCount();
+    if (e.target.name === "access") $("stairsField").classList.toggle("show", state.access === "stairs");
+    if (e.target.id === "date") syncDateChips();
+    const f = e.target.closest(".field.error");
+    if (f && e.type === "change") f.classList.remove("error");
+    if (steps[current].querySelector(".step-error.show") && validate(current)) showStepError(current, false);
+    updateEstimate();
+    save();
+  }
+
+  // Radios: tap a selected option again to clear it; auto-advance on single-choice steps.
+  quiz.addEventListener("click", (e) => {
+    const opt = e.target.closest(".option");
+    if (!opt) return;
+    const input = opt.querySelector('input[type="radio"]');
+    if (!input || e.target === input) return;
+    e.preventDefault();
+    const wasOn = input.checked;
+    input.checked = !wasOn;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    if (!wasOn && AUTO_ADVANCE[input.name] === current) {
+      setTimeout(() => { if (input.checked && AUTO_ADVANCE[input.name] === current) goNext(); }, 260);
+    }
+  });
+
+  // Review "Edit" links
+  quiz.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-goto]");
+    if (b) goTo(+b.dataset.goto);
+  });
+
+  $("itemSearch").addEventListener("input", (e) => filterItems(e.target.value));
+  $("clearItems").addEventListener("click", () => {
+    quiz.querySelectorAll('input[name="items"]:checked').forEach(i => { i.checked = false; });
+    collect(); updateItemCount(); updateEstimate(); save();
+  });
+
+  $("dateChips").addEventListener("click", (e) => {
+    const c = e.target.closest(".chip");
+    if (!c) return;
+    $("date").value = c.dataset.date;
+    $("date").dispatchEvent(new Event("change", { bubbles: true }));
+  });
+
+  // Phone: format as (555) 555-5555 while typing
+  $("phone").addEventListener("input", (e) => {
+    const el = e.target;
+    let d = el.value.replace(/\D/g, "");
+    if (d.length === 11 && d[0] === "1") d = d.slice(1);
+    d = d.slice(0, 10);
+    let out = d;
+    if (d.length > 6) out = "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6);
+    else if (d.length > 3) out = "(" + d.slice(0, 3) + ") " + d.slice(3);
+    else if (d.length > 0) out = "(" + d;
+    if (e.inputType && e.inputType.startsWith("delete") && out.length > el.value.length) return; // don't fight backspace
+    el.value = out;
+  });
+  $("zip").addEventListener("input", (e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 5); });
+
+  // Enter = Next (except in textarea / search)
+  quiz.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" || current >= TOTAL - 1) return;
+    const t = e.target;
+    if (t.tagName === "TEXTAREA" || t.id === "itemSearch" || t.tagName === "BUTTON") {
+      if (t.id === "itemSearch") e.preventDefault();
+      return;
+    }
+    e.preventDefault();
+    goNext();
+  });
+
+  /* =========================================================
+     INIT
+     ========================================================= */
+  if (BUSINESS_PHONE) { const c = $("callBtn"); c.href = telHref(); c.classList.add("show"); c.setAttribute("aria-label", "Call " + BUSINESS_PHONE); }
+  $("yr").textContent = new Date().getFullYear();
+  buildItemGrid();
+  buildDateChips();
+  restore();
+  collect();
+  updateItemCount();
+  syncDateChips();
+  render(false);
+})();
+</script>
+</body>
+</html>
